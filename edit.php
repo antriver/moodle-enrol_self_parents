@@ -35,7 +35,7 @@ $context = context_course::instance($course->id, MUST_EXIST);
 require_login($course);
 require_capability('enrol/self_parents:config', $context);
 
-$PAGE->set_url('enrol/self_parents/edit.php', array('courseid'=>$course->id, 'id'=>$instanceid));
+$PAGE->set_url('/enrol/self_parents/edit.php', array('courseid'=>$course->id, 'id'=>$instanceid));
 $PAGE->set_pagelayout('admin');
 
 $return = new moodle_url('/enrol/instances.php', array('id'=>$course->id));
@@ -47,7 +47,7 @@ if (!enrol_is_enabled('self_parents')) {
 $plugin = enrol_get_plugin('self_parents');
 
 if ($instanceid) {
-    $instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'self', 'id'=>$instanceid), '*', MUST_EXIST);
+    $instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'self_parents', 'id'=>$instanceid), '*', MUST_EXIST);
 
 } else {
     require_capability('moodle/course:enrolconfig', $context);
@@ -99,6 +99,17 @@ if ($mform->is_cancelled()) {
         $instance->customint4     = $data->customint4;
         $instance->customint5     = $data->customint5;
         $instance->customint6     = $data->customint6;
+
+        // customint7 was used by SSIS for bus requirements. Old
+        // data still exists so not repurposing
+        //$instance->customint7     = $data->customint7;
+
+        // customint8: Parent can enrol children?
+        $instance->customint8     = $data->customint8;
+
+        // customchar1: Role for parents
+        $instance->customchar1     = $data->customchar1;
+
         $instance->customtext1    = $data->customtext1;
         $instance->roleid         = $data->roleid;
         $instance->enrolperiod    = $data->enrolperiod;
@@ -125,6 +136,9 @@ if ($mform->is_cancelled()) {
             'customint4'      => $data->customint4,
             'customint5'      => $data->customint5,
             'customint6'      => $data->customint6,
+            //'customint7'      => $data->customint7,
+            'customint8'      => $data->customint8,
+            'customchar1'     => $data->customchar1,
             'customtext1'     => $data->customtext1,
             'roleid'          => $data->roleid,
             'enrolperiod'     => $data->enrolperiod,

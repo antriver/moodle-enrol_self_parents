@@ -141,6 +141,17 @@ class enrol_self_parents_edit_form extends moodleform {
         $mform->addElement('textarea', 'customtext1', get_string('customwelcomemessage', 'enrol_self_parents'), array('cols'=>'60', 'rows'=>'8'));
         $mform->addHelpButton('customtext1', 'customwelcomemessage', 'enrol_self_parents');
 
+        // customint8: Parents can enrol children?
+        $mform->addElement('advcheckbox', 'customint8', get_string('parents_can_enrol_checkbox', 'enrol_self_parents'));
+
+        // customchar1: Role for parents
+        $roles = $this->extend_assignable_roles($context, $instance->customchar1);
+        $select = $mform->addElement('select', 'customchar1', get_string('parent_role', 'enrol_self_parents'), $roles);
+        $select->setSelected($instance->customchar1);
+
+
+
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'courseid');
@@ -204,7 +215,7 @@ class enrol_self_parents_edit_form extends moodleform {
     * Gets a list of roles that this user can assign for the course as the default for self-enrolment.
     *
     * @param context $context the context.
-    * @param integer $defaultrole the id of the role that is set as the default for self-enrolment
+    * @param integer $defaultrole the id of the role that is set as the default for self-parent-enrolment
     * @return array index is the role id, value is the role name
     */
     function extend_assignable_roles($context, $defaultrole) {

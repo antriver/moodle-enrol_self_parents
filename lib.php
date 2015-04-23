@@ -33,6 +33,15 @@ class enrol_self_parents_plugin extends enrol_plugin {
     protected $lasternollerinstanceid = 0;
 
     /**
+     * Returns name of this enrol plugin
+     * @return string
+     */
+    public function get_name() {
+        return 'self_parents';
+    }
+
+
+    /**
      * Returns optional enrolment information icons.
      *
      * This is used in course list for quick overview of enrolment options.
@@ -125,7 +134,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return void
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'self') {
+        if ($instance->enrol !== 'self_parents') {
              throw new coding_exception('Invalid enrol instance type!');
         }
 
@@ -144,7 +153,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
     public function get_action_icons(stdClass $instance) {
         global $OUTPUT;
 
-        if ($instance->enrol !== 'self') {
+        if ($instance->enrol !== 'self_parents') {
             throw new coding_exception('invalid enrol instance!');
         }
         $context = context_course::instance($instance->courseid);
@@ -389,6 +398,9 @@ class enrol_self_parents_plugin extends enrol_plugin {
         $fields['customint4']      = $this->get_config('sendcoursewelcomemessage');
         $fields['customint5']      = 0;
         $fields['customint6']      = $this->get_config('newenrols');
+
+        $fields['customint8']      = $this->get_config('defaultparentscanenrol');
+        $fields['customchar1']      = $this->get_config('defaultparentrole');
 
         return $fields;
     }

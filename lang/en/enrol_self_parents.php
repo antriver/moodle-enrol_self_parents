@@ -35,6 +35,10 @@ The following placeholders may be included in the message:
 * Link to user\'s profile page {$a->profileurl}';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during self enrolment';
+
+$string['defaultparentrole'] = 'Default parent role';
+$string['defaultparentrole_desc'] = 'Select a role which should be assigned to parents when their child enrols. (This can be changed per enrolment instance)';
+
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can enrol themselves until this date only.';
 $string['enrolenddaterror'] = 'Enrolment end date cannot be earlier than start date';
@@ -66,13 +70,14 @@ Note: An enrolment key for the course must be specified in the self enrolment se
 $string['longtimenosee'] = 'Unenrol inactive after';
 $string['longtimenosee_help'] = 'If users haven\'t accessed a course for a long time, then they are automatically unenrolled. This parameter specifies that time limit.';
 $string['maxenrolled'] = 'Max enrolled users';
-$string['maxenrolled_help'] = 'Specifies the maximum number of users that can self enrol. 0 means no limit.';
+$string['maxenrolled_help'] = 'Specifies the maximum number of users that can self enrol. 0 means no limit. Parents are NOT counted in this limit!';
 $string['maxenrolledreached'] = 'Maximum number of users allowed to self-enrol was already reached.';
 $string['messageprovider:expiry_notification'] = 'Self enrolment expiry notifications';
 $string['newenrols'] = 'Allow new enrolments';
 $string['newenrols_desc'] = 'Allow users to self enrol into new courses by default.';
 $string['newenrols_help'] = 'This setting determines whether a user can enrol into this course.';
 $string['nopassword'] = 'No enrolment key required.';
+$string['parents_can_enrol_checkbox'] = 'Parents can enrol their children';
 $string['password'] = 'Enrolment key';
 $string['password_help'] = 'An enrolment key enables access to the course to be restricted to only those who know the key.
 
@@ -82,11 +87,12 @@ If an enrolment key is specified, any user attempting to enrol in the course wil
 $string['passwordinvalid'] = 'Incorrect enrolment key, please try again';
 $string['passwordinvalidhint'] = 'That enrolment key was incorrect, please try again<br />
 (Here\'s a hint - it starts with \'{$a}\')';
-$string['pluginname'] = 'Self and parents';
+$string['pluginname'] = 'Self and parents enrolment';
 $string['pluginname_desc'] = 'The self and parents enrolment plugin works the same as the self enrolment plugin, but parents can also enrol their children into a course. When a child self-enrols into a course, the parent also becomes enroled.';
 $string['requirepassword'] = 'Require enrolment key';
 $string['requirepassword_desc'] = 'Require enrolment key in new courses and prevent removing of enrolment key from existing courses.';
 $string['role'] = 'Default assigned role';
+$string['parent_role'] = 'Role assigned to parents';
 $string['self:config'] = 'Configure self and parents enrol instances';
 $string['self:manage'] = 'Manage enrolled users';
 $string['self:unenrol'] = 'Unenrol users from course';

@@ -113,4 +113,23 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('enrol_self_parents/sendcoursewelcomemessage',
         get_string('sendcoursewelcomemessage', 'enrol_self_parents'), get_string('sendcoursewelcomemessage_help', 'enrol_self_parents'), 1));
+
+
+    // customint8: Default value for parents can enrol children
+    $settings->add(new admin_setting_configcheckbox('enrol_self_parents/defaultparentscanenrol',
+        get_string('parents_can_enrol_checkbox', 'enrol_self_parents'), '', 1));
+
+    // Default role for parents
+    /**
+     * In a default installation, roleid 6 is 'guest' so that
+     * seems like a sensible default value
+     */
+    if (!during_initial_install()) {
+        $options = get_default_enrol_roles(context_system::instance());
+        $guest = get_archetype_roles('guest');
+        $guest = reset($guest);
+        $settings->add(new admin_setting_configselect('enrol_self_parents/defaultparentrole',
+            get_string('defaultparentrole', 'enrol_self_parents'), get_string('defaultparentrole_desc', 'enrol_self_parents'), $guest->id, $options));
+    }
+
 }
