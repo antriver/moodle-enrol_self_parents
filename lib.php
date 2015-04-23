@@ -908,7 +908,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
     /**
      * Custom data
      */
-    public static function getCustomData($instanceid, $userid)
+    public function getCustomData($instanceid, $userid)
     {
         global $DB;
         try {
@@ -920,7 +920,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
 
     }
 
-    public static function setCustomData($instanceid, $userid, $value)
+    public function setCustomData($instanceid, $userid, $value)
     {
         global $DB;
 
