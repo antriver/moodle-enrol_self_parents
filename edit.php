@@ -100,8 +100,8 @@ if ($mform->is_cancelled()) {
         $instance->customint5     = $data->customint5;
         $instance->customint6     = $data->customint6;
 
-        // customint7 was used by SSIS for bus requirements. Old
-        // data still exists so not repurposing
+        // customint7 was used by SSIS for bus requirements.
+        // Old data still exists so not repurposing
         //$instance->customint7     = $data->customint7;
 
         // customint8: Parent can enrol children?
@@ -110,7 +110,15 @@ if ($mform->is_cancelled()) {
         // customchar1: Role for parents
         $instance->customchar1     = $data->customchar1;
 
+        // Parents can unenrol
+        $instance->customchar2     = $data->customchar2;
+
+        // Parents count toward max enroled limit
+        $instance->customchar3     = $data->customchar3;
+
         $instance->customtext1    = $data->customtext1;
+        $instance->customtext2    = $data->customtext2;
+
         $instance->roleid         = $data->roleid;
         $instance->enrolperiod    = $data->enrolperiod;
         $instance->expirynotify   = $data->expirynotify;
@@ -139,7 +147,10 @@ if ($mform->is_cancelled()) {
             //'customint7'      => $data->customint7,
             'customint8'      => $data->customint8,
             'customchar1'     => $data->customchar1,
+            'customchar2'     => $data->customchar2,
+            'customchar3'     => $data->customchar3,
             'customtext1'     => $data->customtext1,
+            'customtext2'     => $data->customtext2,
             'roleid'          => $data->roleid,
             'enrolperiod'     => $data->enrolperiod,
             'expirynotify'    => $data->expirynotify,

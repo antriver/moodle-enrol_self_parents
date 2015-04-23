@@ -144,13 +144,21 @@ class enrol_self_parents_edit_form extends moodleform {
         // customint8: Parents can enrol children?
         $mform->addElement('advcheckbox', 'customint8', get_string('parents_can_enrol_checkbox', 'enrol_self_parents'));
 
+        // customchar2: Parents can unenrol children?
+        $mform->addElement('advcheckbox', 'customchar2', get_string('parents_can_unenrol_checkbox', 'enrol_self_parents'));
+
+
         // customchar1: Role for parents
         $roles = $this->extend_assignable_roles($context, $instance->customchar1);
         $select = $mform->addElement('select', 'customchar1', get_string('parent_role', 'enrol_self_parents'), $roles);
         $select->setSelected($instance->customchar1);
 
+        // customchar3: Parents count towards max enroled limit
+        $mform->addElement('advcheckbox', 'customchar3', get_string('parents_counted_in_maxenrolled_checkbox', 'enrol_self_parents'));
 
-
+        // customtext1: A yes/no question to be asked when a parent enrols a child
+        $mform->addElement('text', 'customtext2', get_string('childenrolmentquestion', 'enrol_self_parents'));
+        $mform->addHelpButton('customtext2', 'childenrolmentquestion', 'enrol_self_parents');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

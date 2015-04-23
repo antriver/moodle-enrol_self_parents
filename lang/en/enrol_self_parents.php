@@ -22,10 +22,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['alreadyenroled'] = 'You are already enroled in this course.';
 $string['canntenrol'] = 'Enrolment is disabled or inactive';
+$string['child_is_enroled'] = 'Enroled! Use the <strong>Course Administration</strong> menu to unenrol.';
 $string['cohortnonmemberinfo'] = 'Only members of cohort \'{$a}\' can self-enrol.';
+$string['childcohortnonmemberinfo'] = 'Can\'t be enroled because only members of cohort \'{$a}\' can be enroled.';
 $string['cohortonly'] = 'Only cohort members';
 $string['cohortonly_help'] = 'Self enrolment may be restricted to members of a specified cohort only. Note that changing this setting has no effect on existing enrolments.';
+
+$string['childenrolmentquestion'] = 'Child enrolment question';
+$string['childenrolmentquestion_help'] = 'An optional yes/no question that parents will answer per-child when enroling a child. Leave blank to disable.
+
+An example use for this is parents saying if their child will need to use the school bus if their participate in this course.';
+$string['childenrolmentquestion_error'] = 'Please ensure you have answered all the questions on the page.';
+
 $string['customwelcomemessage'] = 'Custom welcome message';
 $string['customwelcomemessage_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
 
@@ -39,10 +49,18 @@ $string['defaultrole_desc'] = 'Select role which should be assigned to users dur
 $string['defaultparentrole'] = 'Default parent role';
 $string['defaultparentrole_desc'] = 'Select a role which should be assigned to parents when their child enrols. (This can be changed per enrolment instance)';
 
+$string['enrolchildheader'] = 'Enrol Your Children';
+$string['enrolchilddesc'] = 'Tick which of your children you want to enrol in this activity and then click <strong>Enrol</strong>.';
+$string['enrolchildbutton'] = 'Enrol';
+$string['enrolchildrenlink'] = 'Enrol My Children...';
+
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can enrol themselves until this date only.';
 $string['enrolenddaterror'] = 'Enrolment end date cannot be earlier than start date';
-$string['enrolme'] = 'Enrol me';
+
+$string['enrolmeheader'] = 'Enrol Yourself';
+$string['enrolmebutton'] = 'Enrol Me';
+
 $string['enrolperiod'] = 'Enrolment duration';
 $string['enrolperiod_desc'] = 'Default length of time that the enrolment is valid. If set to zero, the enrolment duration will be unlimited by default.';
 $string['enrolperiod_help'] = 'Length of time that the enrolment is valid, starting with the moment the user enrols themselves. If disabled, the enrolment duration will be unlimited.';
@@ -76,8 +94,11 @@ $string['messageprovider:expiry_notification'] = 'Self enrolment expiry notifica
 $string['newenrols'] = 'Allow new enrolments';
 $string['newenrols_desc'] = 'Allow users to self enrol into new courses by default.';
 $string['newenrols_help'] = 'This setting determines whether a user can enrol into this course.';
-$string['nopassword'] = 'No enrolment key required.';
+$string['nopassword'] = 'Click the \'Enrol Me\' button to join this course.';
+$string['parent_role'] = 'Role assigned to parents';
+$string['parents_counted_in_maxenrolled_checkbox'] = 'Parents count towards the max enroled user limit';
 $string['parents_can_enrol_checkbox'] = 'Parents can enrol their children';
+$string['parents_can_unenrol_checkbox'] = 'Parents can unenrol their children';
 $string['password'] = 'Enrolment key';
 $string['password_help'] = 'An enrolment key enables access to the course to be restricted to only those who know the key.
 
@@ -92,7 +113,6 @@ $string['pluginname_desc'] = 'The self and parents enrolment plugin works the sa
 $string['requirepassword'] = 'Require enrolment key';
 $string['requirepassword_desc'] = 'Require enrolment key in new courses and prevent removing of enrolment key from existing courses.';
 $string['role'] = 'Default assigned role';
-$string['parent_role'] = 'Role assigned to parents';
 $string['self:config'] = 'Configure self and parents enrol instances';
 $string['self:manage'] = 'Manage enrolled users';
 $string['self:unenrol'] = 'Unenrol users from course';
@@ -106,7 +126,10 @@ $string['status_desc'] = 'Enable self enrolment method in new courses.';
 $string['status_help'] = 'If disabled all existing self enrolments are suspended and new users can not enrol.';
 $string['unenrol'] = 'Unenrol user';
 $string['unenrolselfconfirm'] = 'Do you really want to unenrol yourself from course "{$a}"?';
+$string['unenrolchildconfirm'] = 'Do you really want to unenrol {$a->firstname} {$a->lastname} from "{$a->course}"?';
 $string['unenroluser'] = 'Do you really want to unenrol "{$a->user}" from course "{$a->course}"?';
+$string['unenrolchildlink'] = 'Unenrol {$a->firstname} {$a->lastname}';
+$string['unenrol_not_allowed'] = 'Parents are not allowed to unenrol children from this course.';
 $string['usepasswordpolicy'] = 'Use password policy';
 $string['usepasswordpolicy_desc'] = 'Use standard password policy for enrolment keys.';
 $string['welcometocourse'] = 'Welcome to {$a}';

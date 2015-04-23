@@ -40,24 +40,214 @@ class enrol_self_parents_enrol_form extends moodleform {
         return $formid;
     }
 
+    /**
+     * The self+parent enrolment form shown on the /enrol page for a course
+     */
     public function definition() {
+        global $CFG, $DB, $USER;
         $mform = $this->_form;
         $instance = $this->_customdata;
         $this->instance = $instance;
         $plugin = enrol_get_plugin('self_parents');
 
         $heading = $plugin->get_instance_name($instance);
-        $mform->addElement('header', 'selfheader', $heading);
 
+        $mform->addElement('header', 'selfparentsheader', get_string('enrolmeheader', 'enrol_self_parents'));
+
+        // Enrollments are limited to a certain cohort
+        // We bypassed the cohort check in the lib/can_self_enrol function so do it here
+        if ($instance->customint5) {
+            $mustBeInCohort = $DB->get_record('cohort', array('id'=>$instance->customint5));
+            if (!$mustBeInCohort) {
+                throw new \Exception("The required cohort {$instance->customint5} for self_parents instance {$instance->id} does not exist.");
+            }
+
+            // Require cohort functions
+            require_once $CFG->dirroot . '/cohort/lib.php';
+        } else {
+            $mustBeInCohort = false;
+        }
+
+        // FIXME: This is not tested with a passworded enrolment. It might not work
         if ($instance->password) {
             // Change the id of self enrolment key input as there can be multiple self enrolment methods.
             $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self_parents'),
                     array('id' => 'enrolpassword_'.$instance->id));
-        } else {
-            $mform->addElement('static', 'nokey', '', get_string('nopassword', 'enrol_self_parents'));
         }
 
-        $this->add_action_buttons(false, get_string('enrolme', 'enrol_self_parents'));
+
+        /**
+         * Can current user self enrol?
+         */
+        if (enrol_user_is_enrolled($USER->id, $instance->id)) {
+
+            // Curent user already enrolled
+            $mform->addElement(
+                'static',
+                'alreadyenroled',
+                '',
+                get_string('alreadyenroled', 'enrol_self_parents')
+            );
+
+        } elseif ($mustBeInCohort && !cohort_is_member($mustBeInCohort->id, $USER->id)) {
+
+            // Current user not in required cohort
+            $mform->addElement(
+                'static',
+                'cohortnonmemberinfo',
+                '',
+                get_string('cohortnonmemberinfo', 'enrol_self_parents', $mustBeInCohort->name)
+            );
+
+        } else {
+
+            // Current user can self enrol
+            $mform->addElement(
+                'submit',
+                'enrolmesubmit',
+                get_string('enrolmebutton', 'enrol_self_parents')
+            );
+
+        }
+
+
+        /**
+         * Can a parent enrol their child?
+         */
+        if ($instance->customint8) {
+
+            // Check if they have children
+            if ($children = $plugin->get_users_children($USER->id)) {
+
+                $mform->addElement('header', 'enrolchildheader', get_string('enrolchildheader', 'enrol_self_parents'));
+                $mform->addElement('html', '<div class="helptext">' . get_string('enrolchilddesc', 'enrol_self_parents') . '</div>');
+
+                $showBusWarning = false;
+
+                $options = array();
+                foreach($children as $child) {
+
+                    $name = $child->firstname.' '.$child->lastname;
+
+                    $dataCheckbox = '';
+                    if ($instance->customtext2) {
+                        // Custom checkbox
+                        $dataCheckbox = '<span style="margin-left:50px;"> ' . $instance->customtext2 . '</i> ';
+                            // Not selcting a choice by default, so the user has to click, thus confirming the choice.
+                            $dataCheckbox .= '<label>Yes <input type="radio" value="1" name="customtext2['. $child->userid . ']" /></label>';
+                            $dataCheckbox .= '<label>No <input type="radio" value="0" name="customtext2['. $child->userid . ']" /></label>';
+                        $dataCheckbox .= '</span>';
+                    }
+
+                    if (enrol_user_is_enrolled($child->userid, $instance->id)) {
+
+                        // Child is already enrolled
+                        $str = '<span class="text-success">' . get_string('child_is_enroled', 'enrol_self_parents') . '</span>';
+                        $mform->addElement(
+                            'checkbox',
+                            "enrolchilduserids[{$child->userid}]",
+                            $name,
+                            $str,
+                            array(
+                                'disabled' => 'disabled',
+                                'class' => 'enrolchildcheckbox',
+                                'data-userid' => $child->userid
+                            )
+                        );
+
+                    } else if ($mustBeInCohort && !cohort_is_member($mustBeInCohort->id, $child->userid)) {
+
+                        // Child isn't in the required cohort
+                        $str = '<span class="text-danger">' . get_string('childcohortnonmemberinfo', 'enrol_self_parents') . '</span>';
+                        $mform->addElement(
+                            'checkbox',
+                            "enrolchilduserids[{$child->userid}]",
+                            $name,
+                            $str,
+                            array(
+                                'disabled' => 'disabled',
+                                'class' => 'enrolchildcheckbox',
+                                'data-userid' => $child->userid
+                            )
+                        );
+
+                    } else {
+
+                        // Child can be enrolled
+                        $str = $dataCheckbox;
+                        $mform->addElement(
+                            'checkbox',
+                            "enrolchilduserids[{$child->userid}]",
+                            $name,
+                            $str,
+                            array(
+                                'class'=>'enrolchildcheckbox',
+                                'data-userid' => $child->userid
+                            )
+                        );
+
+                    }
+
+                }
+
+
+                // Enrol my child button
+                // A .dnet-disabled class instead of the disabled attribute is used so click events can be bound to the button
+                $mform->addElement(
+                    'submit',
+                    'enrolchildsubmit',
+                    get_string('enrolchildbutton', 'enrol_self_parents'),
+                    array(
+                        'class' => 'dnet-disabled'
+                    )
+                );
+
+                $submitjs = '<script>';
+
+                    $submitjs .= '
+
+                    // Disable the submit button until a child is ticked to enrol
+                    $(document).on("change", "input.enrolchildcheckbox", function() {
+                        var count = $("input.enrolchildcheckbox:checked").length;
+                        if (count > 0) {
+                            $("#id_enrolchildsubmit").removeClass("dnet-disabled");
+                        } else {
+                            $("#id_enrolchildsubmit").addClass("dnet-disabled");
+                        }
+                    });
+
+                    $(document).on("click", "#id_enrolchildsubmit", function(e) {
+                        if ($(this).hasClass("dnet-disabled")) {
+                            alert("Please tick at least one child to enrol.");
+                            return false;
+                        }';
+
+                        if ($instance->customtext2) {
+
+                            $submitjs .= '
+                            // Make sure the custom checkbox has been selected for each user being enroled
+                            $(".enrolchildcheckbox:checked").each(function() {
+
+                                var userID = $(this).attr("data-userid");
+
+                                if ( $(\'input[name="customtext2[\'+ userID + \']"]:checked\').length < 1) {
+
+                                    alert("' . get_string('childenrolmentquestion_error', 'enrol_self_parents') . '");
+                                    e.preventDefault();
+                                }
+                            });
+                            ';
+                        }
+
+                    $submitjs .= '
+                    });
+                    ';
+
+                $submitjs .= '</script>';
+                $mform->addElement('html', $submitjs);
+
+            }
+        }
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

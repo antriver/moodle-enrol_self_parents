@@ -119,7 +119,11 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('enrol_self_parents/defaultparentscanenrol',
         get_string('parents_can_enrol_checkbox', 'enrol_self_parents'), '', 1));
 
-    // Default role for parents
+    // customchar2: Default value for parents can enrol children
+    $settings->add(new admin_setting_configcheckbox('enrol_self_parents/defaultparentscanunenrol',
+        get_string('parents_can_unenrol_checkbox', 'enrol_self_parents'), '', 1));
+
+    // customchar1 Default role for parents
     /**
      * In a default installation, roleid 6 is 'guest' so that
      * seems like a sensible default value
@@ -132,4 +136,18 @@ if ($ADMIN->fulltree) {
             get_string('defaultparentrole', 'enrol_self_parents'), get_string('defaultparentrole_desc', 'enrol_self_parents'), $guest->id, $options));
     }
 
+    // customchar3: Default value for parents counted in max enrol limit
+    $settings->add(new admin_setting_configcheckbox('enrol_self_parents/defaultparentscountedinmaxenrolled',
+        get_string('parents_counted_in_maxenrolled_checkbox', 'enrol_self_parents'), '', 0));
+
+
+    // customtext2: Yes/no question when parent enrols child
+    $settings->add(
+        new admin_setting_configtext(
+            'enrol_self_parents/defaultcustomtext2',
+            get_string('childenrolmentquestion', 'enrol_self_parents'),
+            get_string('childenrolmentquestion_help', 'enrol_self_parents'),
+            ''
+        )
+    );
 }
