@@ -134,7 +134,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
 
-        global $USER;
+        global $DB, $USER;
 
         if ($instance->enrol !== 'self_parents') {
              throw new coding_exception('Invalid enrol instance type!');
@@ -161,7 +161,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
             foreach ($children as $child) {
 
                 // Is this child enrolled in the course?
-                if (enrol_user_is_enrolled($child->userid, $instance->id)) {
+                if ($DB->record_exists('user_enrolments', array('userid' => $child->userid, 'enrolid' => $instance->id))) {
 
                     // Show unenrol link?
                     if ($instance->customchar3) {
