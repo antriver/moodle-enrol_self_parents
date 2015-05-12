@@ -156,8 +156,9 @@ class enrol_self_parents_edit_form extends moodleform {
         // customchar3: Parents count towards max enroled limit
         $mform->addElement('advcheckbox', 'customchar3', get_string('parents_counted_in_maxenrolled_checkbox', 'enrol_self_parents'));
 
-        // customtext1: A yes/no question to be asked when a parent enrols a child
+        // customtext2: A yes/no question to be asked when a parent enrols a child
         $mform->addElement('text', 'customtext2', get_string('childenrolmentquestion', 'enrol_self_parents'));
+        $mform->setType('customtext2', PARAM_RAW);
         $mform->addHelpButton('customtext2', 'childenrolmentquestion', 'enrol_self_parents');
 
         $mform->addElement('hidden', 'id');
