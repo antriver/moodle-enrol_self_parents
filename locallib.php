@@ -44,7 +44,8 @@ class enrol_self_parents_enrol_form extends moodleform {
      * The self+parent enrolment form shown on the /enrol page for a course
      */
     public function definition() {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $PAGE;
+
         $mform = $this->_form;
         $instance = $this->_customdata;
         $this->instance = $instance;
@@ -201,7 +202,7 @@ class enrol_self_parents_enrol_form extends moodleform {
                         'class' => 'dnet-disabled'
                     )
                 );
-
+                $PAGE->requires->jquery();
                 $submitjs = '<script>';
 
                     $submitjs .= '

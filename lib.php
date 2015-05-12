@@ -163,8 +163,8 @@ class enrol_self_parents_plugin extends enrol_plugin {
                 // Is this child enrolled in the course?
                 if ($this->user_is_enrolled($child->userid, $instance->id)) {
 
-                    // Show unenrol link?
-                    if ($instance->customchar3) {
+                    // Can parent unenrol?
+                    if ($instance->customchar2) {
 
                         $str = get_string('unenrolchildlink', 'enrol_self_parents', $child);
                         $instancesnode->parent->parent->add(
@@ -283,7 +283,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
             $this->enrol_user($instance, $userid_to_enrol, $instance->roleid, $timestart, $timeend);
 
             // TODO: Log who enroled whom
-            add_to_log($instance->courseid, 'course', 'enrol', '../enrol/users.php?id='.$instance->courseid, $instance->courseid);
+            //add_to_log($instance->courseid, 'course', 'enrol', '../enrol/users.php?id='.$instance->courseid, $instance->courseid);
 
             // TODO: This isn't tested
             if ($instance->password and $instance->customint1 and $data->enrolpassword !== $instance->password) {
@@ -313,7 +313,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
         // put form fields into the $data object unless they were added
         // to the form using the API. The customtext2 checkbox is added manually to make it
         // appear inline next to the user.
-        if ($instance->customtext2 && is_array($_POST['customtext2'])) {
+        if ($instance->customtext2 && isset($_POST['customtext2']) && is_array($_POST['customtext2'])) {
             foreach ($_POST['customtext2'] as $userid => $value) {
                 $this->setCustomData($instance->id, $userid, $value);
             }

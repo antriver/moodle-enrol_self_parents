@@ -58,7 +58,7 @@ $PAGE->set_heading($course->fullname);
 
 if ($confirm and confirm_sesskey()) {
     $plugin->unenrol_user($instance, $childuserid);
-    add_to_log($course->id, 'course', 'unenrol', '../enrol/users.php?id='.$course->id, $course->id);
+    //add_to_log($course->id, 'course', 'unenrol', '../enrol/users.php?id='.$course->id, $course->id);
     redirect(new moodle_url('/enrol/index.php?', array('id'=>$course->id)));
 }
 
