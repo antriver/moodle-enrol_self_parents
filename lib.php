@@ -161,7 +161,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
             foreach ($children as $child) {
 
                 // Is this child enrolled in the course?
-                if ($DB->record_exists('user_enrolments', array('userid' => $child->userid, 'enrolid' => $instance->id))) {
+                if ($this->user_is_enrolled($child->userid, $instance->id)) {
 
                     // Show unenrol link?
                     if ($instance->customchar3) {
@@ -863,7 +863,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
         $parents = $this->get_users_parents($userid);
         foreach ($parents as $parent) {
             // Check if parent is enrolled
-            if (!enrol_user_is_enrolled($parent->userid, $instance->id)) {
+            if (!$this->user_is_enrolled($parent->userid, $instance->id)) {
                 // Parent isn't enrolled - enrol them!
                 $this->enrol_user($instance, $parent->userid, $instance->customchar1);
             }
@@ -880,7 +880,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
         $parents = $this->get_users_parents($userid);
         foreach ($parents as $parent) {
             // Check if parent is enrolled
-            if (enrol_user_is_enrolled($parent->userid, $instance->id)) {
+            if ($this->user_is_enrolled($parent->userid, $instance->id)) {
                 // Parent is enrolled - we're going to unenrol them
                 // unless they have other children who are still enrolled
                 $unenrolParent = true;
@@ -888,7 +888,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
                 // Check if the parent still has other children who are enrolled
                 $children = $this->get_users_children($parent->userid);
                 foreach ($children as $child) {
-                    if (enrol_user_is_enrolled($child->userid, $instance->id)) {
+                    if ($this->user_is_enrolled($child->userid, $instance->id)) {
                         //Child is still enrolled - not going to unenrol the parent
                         $unenrolParent = false;
                         break;
@@ -904,6 +904,15 @@ class enrol_self_parents_plugin extends enrol_plugin {
         }
     }
 
+
+   /**
+    * Returns true or false if the given userid is enrolled in the given enrolment instance
+    */
+    function user_is_enrolled($userid, $instanceid)
+    {
+        global $DB;
+        return $DB->record_exists('user_enrolments', array('userid' => $userid, 'enrolid' => $instanceid));
+    }
 
     /**
      * Custom data

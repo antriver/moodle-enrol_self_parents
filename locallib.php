@@ -68,7 +68,7 @@ class enrol_self_parents_enrol_form extends moodleform {
             $mustBeInCohort = false;
         }
 
-        // FIXME: This is not tested with a passworded enrolment. It might not work
+        // TODO: This is not tested with a passworded enrolment. It might not work
         if ($instance->password) {
             // Change the id of self enrolment key input as there can be multiple self enrolment methods.
             $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self_parents'),
@@ -79,7 +79,7 @@ class enrol_self_parents_enrol_form extends moodleform {
         /**
          * Can current user self enrol?
          */
-        if (enrol_user_is_enrolled($USER->id, $instance->id)) {
+        if ($plugin->user_is_enrolled($USER->id, $instance->id)) {
 
             // Curent user already enrolled
             $mform->addElement(
@@ -139,7 +139,7 @@ class enrol_self_parents_enrol_form extends moodleform {
                         $dataCheckbox .= '</span>';
                     }
 
-                    if (enrol_user_is_enrolled($child->userid, $instance->id)) {
+                    if ($plugin->user_is_enrolled($child->userid, $instance->id)) {
 
                         // Child is already enrolled
                         $str = '<span class="text-success">' . get_string('child_is_enroled', 'enrol_self_parents') . '</span>';
