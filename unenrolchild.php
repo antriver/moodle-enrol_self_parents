@@ -28,8 +28,8 @@ $enrolid = required_param('enrolid', PARAM_INT);
 $childuserid = required_param('childuserid', PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$instance = $DB->get_record('enrol', array('id'=>$enrolid, 'enrol'=>'self_parents'), '*', MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
+$instance = $DB->get_record('enrol', array('id' => $enrolid, 'enrol' => 'self_parents'), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $instance->courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 // Does enrolment instance allow parents to unenrol children?
@@ -37,7 +37,6 @@ if (!$instance->customchar2) {
     throw new \Exception(get_string('unenrol_not_allowed', 'enrol_self_parents'));
 }
 
-//require_login();
 require_login($course);
 
 $plugin = enrol_get_plugin('self_parents');
@@ -45,33 +44,32 @@ $plugin = enrol_get_plugin('self_parents');
 // Require that user is a child of the current user
 $children = $plugin->get_users_children($USER->id);
 if (!isset($children[$childuserid])) {
-	die("That's not your child.");
+    die("That's not your child.");
 } else {
-	$child = $children[$childuserid];
+    $child = $children[$childuserid];
 }
 
 
 // Security defined inside following function.
-$PAGE->set_url('/enrol/self_parents/unenrolchild.php', array('enrolid'=>$instance->id, 'childuserid'=>$childuserid));
+$PAGE->set_url('/enrol/self_parents/unenrolchild.php', array('enrolid' => $instance->id, 'childuserid' => $childuserid));
 $PAGE->set_title($course->fullname);
 $PAGE->set_heading($course->fullname);
 
 if ($confirm and confirm_sesskey()) {
     $plugin->unenrol_user($instance, $childuserid);
-    //add_to_log($course->id, 'course', 'unenrol', '../enrol/users.php?id='.$course->id, $course->id);
-    redirect(new moodle_url('/enrol/index.php?', array('id'=>$course->id)));
+    redirect(new moodle_url('/enrol/index.php?', array('id' => $course->id)));
 }
 
 echo $OUTPUT->header();
-$yesurl = new moodle_url($PAGE->url, array('confirm'=>1, 'sesskey'=>sesskey()));
-$nourl = new moodle_url('/enrol/index.php?', array('id'=>$course->id));
+$yesurl = new moodle_url($PAGE->url, array('confirm' => 1, 'sesskey' => sesskey()));
+$nourl = new moodle_url('/enrol/index.php?', array('id' => $course->id));
 
-$messgeVars = (object)array(
+$messgevars = (object)array(
     'course' => format_string($course->fullname),
     'firstname' => $child->firstname,
     'lastname' => $child->lastname
 );
-$message = get_string('unenrolchildconfirm', 'enrol_self_parents', $messgeVars);
+$message = get_string('unenrolchildconfirm', 'enrol_self_parents', $messgevars);
 
 echo $OUTPUT->confirm($message, $yesurl, $nourl);
 echo $OUTPUT->footer();

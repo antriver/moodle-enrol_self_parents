@@ -26,7 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 
-class enrol_self_parents_enrol_form extends moodleform {
+class enrol_self_parents_enrol_form extends moodleform
+{
     protected $instance;
     protected $toomany = false;
 
@@ -36,6 +37,7 @@ class enrol_self_parents_enrol_form extends moodleform {
      * @return string form identifier
      */
     protected function get_form_identifier() {
+
         $formid = $this->_customdata->id.'_'.get_class($this);
         return $formid;
     }
@@ -44,6 +46,7 @@ class enrol_self_parents_enrol_form extends moodleform {
      * The self+parent enrolment form shown on the /enrol page for a course
      */
     public function definition() {
+
         global $CFG, $DB, $USER, $PAGE;
 
         $mform = $this->_form;
@@ -58,30 +61,32 @@ class enrol_self_parents_enrol_form extends moodleform {
         // Enrollments are limited to a certain cohort
         // We bypassed the cohort check in the lib/can_self_enrol function so do it here
         if ($instance->customint5) {
-            $mustBeInCohort = $DB->get_record('cohort', array('id'=>$instance->customint5));
-            if (!$mustBeInCohort) {
+            $mustbeincohort = $DB->get_record('cohort', array('id' => $instance->customint5));
+            if (!$mustbeincohort) {
                 throw new \Exception("The required cohort {$instance->customint5} for self_parents instance {$instance->id} does not exist.");
             }
 
             // Require cohort functions
-            require_once $CFG->dirroot . '/cohort/lib.php';
+            require_once($CFG->dirroot . '/cohort/lib.php');
         } else {
-            $mustBeInCohort = false;
+            $mustbeincohort = false;
         }
 
         // TODO: This is not tested with a passworded enrolment. It might not work
         if ($instance->password) {
             // Change the id of self enrolment key input as there can be multiple self enrolment methods.
-            $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self_parents'),
-                    array('id' => 'enrolpassword_'.$instance->id));
+            $mform->addElement(
+                'passwordunmask',
+                'enrolpassword',
+                get_string('password', 'enrol_self_parents'),
+                array('id' => 'enrolpassword_'.$instance->id)
+            );
         }
-
 
         /**
          * Can current user self enrol?
          */
         if ($plugin->user_is_enrolled($USER->id, $instance->id)) {
-
             // Curent user already enrolled
             $mform->addElement(
                 'static',
@@ -90,18 +95,16 @@ class enrol_self_parents_enrol_form extends moodleform {
                 get_string('alreadyenroled', 'enrol_self_parents')
             );
 
-        } elseif ($mustBeInCohort && !cohort_is_member($mustBeInCohort->id, $USER->id)) {
-
+        } else if ($mustbeincohort && !cohort_is_member($mustbeincohort->id, $USER->id)) {
             // Current user not in required cohort
             $mform->addElement(
                 'static',
                 'cohortnonmemberinfo',
                 '',
-                get_string('cohortnonmemberinfo', 'enrol_self_parents', $mustBeInCohort->name)
+                get_string('cohortnonmemberinfo', 'enrol_self_parents', $mustbeincohort->name)
             );
 
         } else {
-
             // Current user can self enrol
             $mform->addElement(
                 'submit',
@@ -111,37 +114,30 @@ class enrol_self_parents_enrol_form extends moodleform {
 
         }
 
-
         /**
          * Can a parent enrol their child?
          */
         if ($instance->customint8) {
-
             // Check if they have children
             if ($children = $plugin->get_users_children($USER->id)) {
-
                 $mform->addElement('header', 'enrolchildheader', get_string('enrolchildheader', 'enrol_self_parents'));
                 $mform->addElement('html', '<div class="helptext">' . get_string('enrolchilddesc', 'enrol_self_parents') . '</div>');
 
-                $showBusWarning = false;
-
                 $options = array();
-                foreach($children as $child) {
-
+                foreach ($children as $child) {
                     $name = $child->firstname.' '.$child->lastname;
 
-                    $dataCheckbox = '';
+                    $datacheckbox = '';
                     if ($instance->customtext2) {
                         // Custom checkbox
-                        $dataCheckbox = '<span style="margin-left:50px;"> ' . $instance->customtext2 . '</i> ';
+                        $datacheckbox = '<span style="margin-left:50px;"> ' . $instance->customtext2 . '</i> ';
                             // Not selcting a choice by default, so the user has to click, thus confirming the choice.
-                            $dataCheckbox .= '<label>Yes <input type="radio" value="1" name="customtext2['. $child->userid . ']" /></label>';
-                            $dataCheckbox .= '<label>No <input type="radio" value="0" name="customtext2['. $child->userid . ']" /></label>';
-                        $dataCheckbox .= '</span>';
+                            $datacheckbox .= '<label>Yes <input type="radio" value="1" name="customtext2['. $child->userid . ']" /></label>';
+                            $datacheckbox .= '<label>No <input type="radio" value="0" name="customtext2['. $child->userid . ']" /></label>';
+                        $datacheckbox .= '</span>';
                     }
 
                     if ($plugin->user_is_enrolled($child->userid, $instance->id)) {
-
                         // Child is already enrolled
                         $str = '<span class="text-success">' . get_string('child_is_enroled', 'enrol_self_parents') . '</span>';
                         $mform->addElement(
@@ -156,8 +152,7 @@ class enrol_self_parents_enrol_form extends moodleform {
                             )
                         );
 
-                    } else if ($mustBeInCohort && !cohort_is_member($mustBeInCohort->id, $child->userid)) {
-
+                    } else if ($mustbeincohort && !cohort_is_member($mustbeincohort->id, $child->userid)) {
                         // Child isn't in the required cohort
                         $str = '<span class="text-danger">' . get_string('childcohortnonmemberinfo', 'enrol_self_parents') . '</span>';
                         $mform->addElement(
@@ -173,16 +168,15 @@ class enrol_self_parents_enrol_form extends moodleform {
                         );
 
                     } else {
-
                         // Child can be enrolled
-                        $str = $dataCheckbox;
+                        $str = $datacheckbox;
                         $mform->addElement(
                             'checkbox',
                             "enrolchilduserids[{$child->userid}]",
                             $name,
                             $str,
                             array(
-                                'class'=>'enrolchildcheckbox',
+                                'class' => 'enrolchildcheckbox',
                                 'data-userid' => $child->userid
                             )
                         );
@@ -190,7 +184,6 @@ class enrol_self_parents_enrol_form extends moodleform {
                     }
 
                 }
-
 
                 // Enrol my child button
                 // A .dnet-disabled class instead of the disabled attribute is used so click events can be bound to the button
@@ -223,9 +216,8 @@ class enrol_self_parents_enrol_form extends moodleform {
                             return false;
                         }';
 
-                        if ($instance->customtext2) {
-
-                            $submitjs .= '
+                if ($instance->customtext2) {
+                    $submitjs .= '
                             // Make sure the custom checkbox has been selected for each user being enroled
                             $(".enrolchildcheckbox:checked").each(function() {
 
@@ -238,7 +230,7 @@ class enrol_self_parents_enrol_form extends moodleform {
                                 }
                             });
                             ';
-                        }
+                }
 
                     $submitjs .= '
                     });
@@ -260,6 +252,7 @@ class enrol_self_parents_enrol_form extends moodleform {
     }
 
     public function validation($data, $files) {
+
         global $DB, $CFG;
 
         $errors = parent::validation($data, $files);
@@ -273,7 +266,7 @@ class enrol_self_parents_enrol_form extends moodleform {
         if ($instance->password) {
             if ($data['enrolpassword'] !== $instance->password) {
                 if ($instance->customint1) {
-                    $groups = $DB->get_records('groups', array('courseid'=>$instance->courseid), 'id ASC', 'id, enrolmentkey');
+                    $groups = $DB->get_records('groups', array('courseid' => $instance->courseid), 'id ASC', 'id, enrolmentkey');
                     $found = false;
                     foreach ($groups as $group) {
                         if (empty($group->enrolmentkey)) {

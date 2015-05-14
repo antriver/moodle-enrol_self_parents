@@ -34,7 +34,8 @@ require_once("$CFG->libdir/externallib.php");
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.6
  */
-class enrol_self_parents_external extends external_api {
+class enrol_self_parents_external extends external_api
+{
 
     /**
      * Returns description of get_instance_info() parameters.
@@ -42,9 +43,10 @@ class enrol_self_parents_external extends external_api {
      * @return external_function_parameters
      */
     public static function get_instance_info_parameters() {
+
         return new external_function_parameters(
-                array('instanceid' => new external_value(PARAM_INT, 'instance id of self and parent enrolment plugin.'))
-            );
+            array('instanceid' => new external_value(PARAM_INT, 'instance id of self and parent enrolment plugin.'))
+        );
     }
 
     /**
@@ -54,6 +56,7 @@ class enrol_self_parents_external extends external_api {
      * @return array instance information.
      */
     public static function get_instance_info($instanceid) {
+
         global $DB, $CFG;
 
         require_once($CFG->libdir . '/enrollib.php');
@@ -86,6 +89,7 @@ class enrol_self_parents_external extends external_api {
      * @return external_description
      */
     public static function get_instance_info_returns() {
+
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'id of course enrolment instance'),

@@ -29,16 +29,16 @@ require_once('edit_form.php');
 $courseid   = required_param('courseid', PARAM_INT);
 $instanceid = optional_param('id', 0, PARAM_INT);
 
-$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);
 require_capability('enrol/self_parents:config', $context);
 
-$PAGE->set_url('/enrol/self_parents/edit.php', array('courseid'=>$course->id, 'id'=>$instanceid));
+$PAGE->set_url('/enrol/self_parents/edit.php', array('courseid' => $course->id, 'id' => $instanceid));
 $PAGE->set_pagelayout('admin');
 
-$return = new moodle_url('/enrol/instances.php', array('id'=>$course->id));
+$return = new moodle_url('/enrol/instances.php', array('id' => $course->id));
 if (!enrol_is_enabled('self_parents')) {
     redirect($return);
 }
@@ -47,12 +47,20 @@ if (!enrol_is_enabled('self_parents')) {
 $plugin = enrol_get_plugin('self_parents');
 
 if ($instanceid) {
-    $instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'self_parents', 'id'=>$instanceid), '*', MUST_EXIST);
-
+    $instance = $DB->get_record(
+        'enrol',
+        array(
+            'courseid' => $course->id,
+            'enrol' => 'self_parents',
+            'id' => $instanceid
+        ),
+        '*',
+        MUST_EXIST
+    );
 } else {
     require_capability('moodle/course:enrolconfig', $context);
     // No instance yet, we have to add new instance.
-    navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
+    navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id' => $course->id)));
 
     $instance = (object)$plugin->get_instance_defaults();
     $instance->id       = null;
@@ -66,7 +74,7 @@ if ($instance->notifyall and $instance->expirynotify) {
 }
 unset($instance->notifyall);
 
-$mform = new enrol_self_parents_edit_form(NULL, array($instance, $plugin, $context));
+$mform = new enrol_self_parents_edit_form(null, array($instance, $plugin, $context));
 
 if ($mform->is_cancelled()) {
     redirect($return);
@@ -102,7 +110,7 @@ if ($mform->is_cancelled()) {
 
         // customint7 was used by SSIS for bus requirements.
         // Old data still exists so not repurposing
-        //$instance->customint7     = $data->customint7;
+        // $instance->customint7     = $data->customint7;
 
         // customint8: Parent can enrol children?
         $instance->customint8     = $data->customint8;
@@ -144,7 +152,7 @@ if ($mform->is_cancelled()) {
             'customint4'      => $data->customint4,
             'customint5'      => $data->customint5,
             'customint6'      => $data->customint6,
-            //'customint7'      => $data->customint7,
+            // 'customint7'      => $data->customint7,
             'customint8'      => $data->customint8,
             'customchar1'     => $data->customchar1,
             'customchar2'     => $data->customchar2,

@@ -30,12 +30,14 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/enrol/self/externallib.php');
 
-class enrol_self_parents_external_testcase extends externallib_advanced_testcase {
+class enrol_self_parents_external_testcase extends externallib_advanced_testcase
+{
 
     /**
      * Test get_instance_info
      */
     public function test_get_instance_info() {
+
         global $DB;
 
         $this->resetAfterTest(true);
@@ -44,7 +46,7 @@ class enrol_self_parents_external_testcase extends externallib_advanced_testcase
         $selfplugin = enrol_get_plugin('self_parents');
         $this->assertNotEmpty($selfplugin);
 
-        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->assertNotEmpty($studentrole);
 
         $course = self::getDataGenerator()->create_course();

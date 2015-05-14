@@ -28,9 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/cohort/lib.php');
 
-class enrol_self_parents_edit_form extends moodleform {
+class enrol_self_parents_edit_form extends moodleform
+{
 
-    function definition() {
+    public function definition() {
+
         global $DB;
 
         $mform = $this->_form;
@@ -138,7 +140,7 @@ class enrol_self_parents_edit_form extends moodleform {
         $mform->addElement('advcheckbox', 'customint4', get_string('sendcoursewelcomemessage', 'enrol_self_parents'));
         $mform->addHelpButton('customint4', 'sendcoursewelcomemessage', 'enrol_self_parents');
 
-        $mform->addElement('textarea', 'customtext1', get_string('customwelcomemessage', 'enrol_self_parents'), array('cols'=>'60', 'rows'=>'8'));
+        $mform->addElement('textarea', 'customtext1', get_string('customwelcomemessage', 'enrol_self_parents'), array('cols' => '60', 'rows' => '8'));
         $mform->addHelpButton('customtext1', 'customwelcomemessage', 'enrol_self_parents');
 
         // customint8: Parents can enrol children?
@@ -146,7 +148,6 @@ class enrol_self_parents_edit_form extends moodleform {
 
         // customchar2: Parents can unenrol children?
         $mform->addElement('advcheckbox', 'customchar2', get_string('parents_can_unenrol_checkbox', 'enrol_self_parents'));
-
 
         // customchar1: Role for parents
         $roles = $this->extend_assignable_roles($context, $instance->customchar1);
@@ -175,7 +176,8 @@ class enrol_self_parents_edit_form extends moodleform {
         $this->set_data($instance);
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
+
         global $DB, $CFG;
         $errors = parent::validation($data, $files);
 
@@ -200,7 +202,7 @@ class enrol_self_parents_edit_form extends moodleform {
             if ($require and trim($data['password']) === '') {
                 $errors['password'] = get_string('required');
             } else if ($policy) {
-                $errmsg = '';//prevent eclipse warning
+                $errmsg = ''; // prevent eclipse warning
                 if (!check_password_policy($data['password'], $errmsg)) {
                     $errors['password'] = $errmsg;
                 }
@@ -221,18 +223,19 @@ class enrol_self_parents_edit_form extends moodleform {
     }
 
     /**
-    * Gets a list of roles that this user can assign for the course as the default for self-enrolment.
-    *
-    * @param context $context the context.
-    * @param integer $defaultrole the id of the role that is set as the default for self-parent-enrolment
-    * @return array index is the role id, value is the role name
-    */
-    function extend_assignable_roles($context, $defaultrole) {
+     * Gets a list of roles that this user can assign for the course as the default for self-enrolment.
+     *
+     * @param context $context the context.
+     * @param integer $defaultrole the id of the role that is set as the default for self-parent-enrolment
+     * @return array index is the role id, value is the role name
+     */
+    public function extend_assignable_roles($context, $defaultrole) {
+
         global $DB;
 
         $roles = get_assignable_roles($context, ROLENAME_BOTH);
         if (!isset($roles[$defaultrole])) {
-            if ($role = $DB->get_record('role', array('id'=>$defaultrole))) {
+            if ($role = $DB->get_record('role', array('id' => $defaultrole))) {
                 $roles[$defaultrole] = role_get_name($role, $context, ROLENAME_BOTH);
             }
         }

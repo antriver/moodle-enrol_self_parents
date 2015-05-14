@@ -27,7 +27,8 @@
  * @author Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_self_parents_plugin extends enrol_plugin {
+class enrol_self_parents_plugin extends enrol_plugin
+{
 
     protected $lasternoller = null;
     protected $lasternollerinstanceid = 0;
@@ -37,6 +38,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return string
      */
     public function get_name() {
+
         return 'self_parents';
     }
 
@@ -53,6 +55,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
+
         $key = false;
         $nokey = false;
         foreach ($instances as $instance) {
@@ -86,10 +89,11 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return string
      */
     public function get_instance_name($instance) {
+
         global $DB;
 
         if (empty($instance->name)) {
-            if (!empty($instance->roleid) and $role = $DB->get_record('role', array('id'=>$instance->roleid))) {
+            if (!empty($instance->roleid) and $role = $DB->get_record('role', array('id' => $instance->roleid))) {
                 $role = ' (' . role_get_name($role, context_course::instance($instance->courseid, IGNORE_MISSING)) . ')';
             } else {
                 $role = '';
@@ -102,16 +106,19 @@ class enrol_self_parents_plugin extends enrol_plugin {
     }
 
     public function roles_protected() {
+
         // Users may tweak the roles later.
         return false;
     }
 
     public function allow_unenrol(stdClass $instance) {
+
         // Users with unenrol cap may unenrol other users manually manually.
         return true;
     }
 
     public function allow_manage(stdClass $instance) {
+
         // Users with manage cap may tweak period and status.
         return true;
     }
@@ -142,7 +149,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
 
         $context = context_course::instance($instance->courseid);
         if (has_capability('enrol/self_parents:config', $context)) {
-            $managelink = new moodle_url('/enrol/self_parents/edit.php', array('courseid'=>$instance->courseid, 'id'=>$instance->id));
+            $managelink = new moodle_url('/enrol/self_parents/edit.php', array('courseid' => $instance->courseid, 'id' => $instance->id));
             $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
         }
 
@@ -151,21 +158,17 @@ class enrol_self_parents_plugin extends enrol_plugin {
         * Add links to do this in the course administration menu
         */
         if ($instance->customint8 || $instance->customchar3) {
-
             // Get current user's children
             $children = $this->get_users_children($USER->id);
 
             // Should there be a link to enrol more children?
-            $showEnrolMoreChildrenLink = false;
+            $showenrolmorechildrenlink = false;
 
             foreach ($children as $child) {
-
                 // Is this child enrolled in the course?
                 if ($this->user_is_enrolled($child->userid, $instance->id)) {
-
                     // Can parent unenrol?
                     if ($instance->customchar2) {
-
                         $str = get_string('unenrolchildlink', 'enrol_self_parents', $child);
                         $instancesnode->parent->parent->add(
                             $str,
@@ -183,14 +186,13 @@ class enrol_self_parents_plugin extends enrol_plugin {
 
                     }
 
-
-                } elseif ($instance->customint8) {
+                } else if ($instance->customint8) {
                     // This child isn't enrolled, so show the link to the enrol page for this course
-                    $showEnrolMoreChildrenLink = true;
+                    $showenrolmorechildrenlink = true;
                 }
             }
 
-            if ($showEnrolMoreChildrenLink) {
+            if ($showenrolmorechildrenlink) {
                 $instancesnode->parent->parent->add(
                     get_string('enrolchildrenlink', 'enrol_self_parents'),
                     "/enrol/index.php?id={$instance->courseid}",
@@ -207,6 +209,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return array
      */
     public function get_action_icons(stdClass $instance) {
+
         global $OUTPUT;
 
         if ($instance->enrol !== 'self_parents') {
@@ -217,9 +220,13 @@ class enrol_self_parents_plugin extends enrol_plugin {
         $icons = array();
 
         if (has_capability('enrol/self_parents:config', $context)) {
-            $editlink = new moodle_url("/enrol/self_parents/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                array('class' => 'iconsmall')));
+            $editlink = new moodle_url("/enrol/self_parents/edit.php", array('courseid' => $instance->courseid, 'id' => $instance->id));
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon(
+                't/edit',
+                get_string('edit'),
+                'core',
+                array('class' => 'iconsmall')
+            ));
         }
 
         return $icons;
@@ -231,13 +238,14 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return moodle_url page url
      */
     public function get_newinstance_link($courseid) {
+
         $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/self_parents:config', $context)) {
-            return NULL;
+            return null;
         }
         // Multiple instances supported - different roles with different password.
-        return new moodle_url('/enrol/self_parents/edit.php', array('courseid'=>$courseid));
+        return new moodle_url('/enrol/self_parents/edit.php', array('courseid' => $courseid));
     }
 
     /**
@@ -248,6 +256,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return bool|array true if enroled else eddor code and messege
      */
     public function enrol_self_parents(stdClass $instance, $data = null) {
+
         global $DB, $USER, $CFG;
 
         // Don't enrol user if password is not passed when required.
@@ -263,38 +272,34 @@ class enrol_self_parents_plugin extends enrol_plugin {
         }
 
         // Deterime who to enrol
-        $userids_to_enrol = array();
+        $useridstoenrol = array();
 
         if (isset($data->enrolchildsubmit)) {
             // The enrol my child button was clicked
             // Enrol the given userIDs
             foreach ($data->enrolchilduserids as $userid => $null) {
-                $userids_to_enrol[] = $userid;
+                $useridstoenrol[] = $userid;
             }
         } else {
             // The enrol self button was clicked
             // Enrol the current user
-            $userids_to_enrol[] = $USER->id;
+            $useridstoenrol[] = $USER->id;
         }
 
         // Now do the enrolment
-        foreach ($userids_to_enrol as $userid_to_enrol) {
-
-            $this->enrol_user($instance, $userid_to_enrol, $instance->roleid, $timestart, $timeend);
-
-            // TODO: Log who enroled whom
-            //add_to_log($instance->courseid, 'course', 'enrol', '../enrol/users.php?id='.$instance->courseid, $instance->courseid);
+        foreach ($useridstoenrol as $useridtoenrol) {
+            $this->enrol_user($instance, $useridtoenrol, $instance->roleid, $timestart, $timeend);
 
             // TODO: This isn't tested
             if ($instance->password and $instance->customint1 and $data->enrolpassword !== $instance->password) {
                 // it must be a group enrolment, let's assign group too
-                $groups = $DB->get_records('groups', array('courseid'=>$instance->courseid), 'id', 'id, enrolmentkey');
+                $groups = $DB->get_records('groups', array('courseid' => $instance->courseid), 'id', 'id, enrolmentkey');
                 foreach ($groups as $group) {
                     if (empty($group->enrolmentkey)) {
                         continue;
                     }
                     if ($group->enrolmentkey === $data->enrolpassword) {
-                        groups_add_member($group->id, $userid_to_enrol);
+                        groups_add_member($group->id, $useridtoenrol);
                         break;
                     }
                 }
@@ -306,7 +311,6 @@ class enrol_self_parents_plugin extends enrol_plugin {
             }
         }
 
-
         // Save custom checkbox data
 
         // Using $_POST instead of $data because Moodle doesn't
@@ -315,11 +319,11 @@ class enrol_self_parents_plugin extends enrol_plugin {
         // appear inline next to the user.
         if ($instance->customtext2 && isset($_POST['customtext2']) && is_array($_POST['customtext2'])) {
             foreach ($_POST['customtext2'] as $userid => $value) {
-                $this->setCustomData($instance->id, $userid, $value);
+                $this->set_custom_data($instance->id, $userid, $value);
             }
         }
 
-        return $userids_to_enrol;
+        return $useridstoenrol;
     }
 
     /**
@@ -330,6 +334,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
+
         global $CFG, $OUTPUT, $USER;
 
         require_once("$CFG->dirroot/enrol/self_parents/locallib.php");
@@ -338,10 +343,9 @@ class enrol_self_parents_plugin extends enrol_plugin {
 
         // Don't show enrolment instance form, if user can't enrol using it.
         if (true === $enrolstatus) {
-            $form = new enrol_self_parents_enrol_form(NULL, $instance);
+            $form = new enrol_self_parents_enrol_form(null, $instance);
             $instanceid = optional_param('instance', 0, PARAM_INT);
             if ($instance->id == $instanceid) {
-
                 // If form has been posted, do the enrolment
                 if ($data = $form->get_data()) {
                     $this->enrol_self_parents($instance, $data);
@@ -366,6 +370,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return bool|string true if successful, else error message or false.
      */
     public function can_user_enrol(stdClass $instance, $checkuserenrolment = true) {
+
         global $DB, $USER, $CFG;
 
         if (!$instance->customint8 && $checkuserenrolment) {
@@ -406,13 +411,12 @@ class enrol_self_parents_plugin extends enrol_plugin {
         }
 
         if ($instance->customint3 > 0) {
-
             // Max enrol limit specified.
             $count = $DB->count_records('user_enrolments', array('enrolid' => $instance->id));
 
             if ($instance->customchar3) {
                 // Count parents in enrol limit
-                $count = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
+                $count = $DB->count_records('user_enrolments', array('enrolid' => $instance->id));
             } else {
                 // Don't count parents in enrol limit
                 $q = 'select count(*) from {user_enrolments} ue
@@ -473,6 +477,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return int id of new instance
      */
     public function add_default_instance($course) {
+
         $fields = $this->get_instance_defaults();
 
         if ($this->get_config('requirepassword')) {
@@ -487,6 +492,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return array
      */
     public function get_instance_defaults() {
+
         $expirynotify = $this->get_config('expirynotify');
         if ($expirynotify == 2) {
             $expirynotify = 1;
@@ -527,13 +533,14 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return void
      */
     protected function email_welcome_message($instance, $user) {
+
         global $CFG, $DB;
 
-        $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $instance->courseid), '*', MUST_EXIST);
         $context = context_course::instance($course->id);
 
         $a = new stdClass();
-        $a->coursename = format_string($course->fullname, true, array('context'=>$context));
+        $a->coursename = format_string($course->fullname, true, array('context' => $context));
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
 
         if (trim($instance->customtext1) !== '') {
@@ -546,7 +553,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
                 $messagehtml = text_to_html($messagetext, null, false, true);
             } else {
                 // This is most probably the tag/newline soup known as FORMAT_MOODLE.
-                $messagehtml = format_text($message, FORMAT_MOODLE, array('context'=>$context, 'para'=>false, 'newlines'=>true, 'filter'=>true));
+                $messagehtml = format_text($message, FORMAT_MOODLE, array('context' => $context, 'para' => false, 'newlines' => true, 'filter' => true));
                 $messagetext = html_to_text($messagehtml);
             }
         } else {
@@ -554,7 +561,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
             $messagehtml = text_to_html($messagetext, null, false, true);
         }
 
-        $subject = get_string('welcometocourse', 'enrol_self_parents', format_string($course->fullname, true, array('context'=>$context)));
+        $subject = get_string('welcometocourse', 'enrol_self_parents', format_string($course->fullname, true, array('context' => $context)));
 
         $rusers = array();
         if (!empty($CFG->coursecontact)) {
@@ -563,8 +570,19 @@ class enrol_self_parents_plugin extends enrol_plugin {
             // We only use the first user.
             $i = 0;
             do {
-                $rusers = get_role_users($croles[$i], $context, true, '',
-                    'r.sortorder ASC, ' . $sort, null, '', '', '', '', $sortparams);
+                $rusers = get_role_users(
+                    $croles[$i],
+                    $context,
+                    true,
+                    '',
+                    'r.sortorder ASC, ' . $sort,
+                    null,
+                    '',
+                    '',
+                    '',
+                    '',
+                    $sortparams
+                );
                 $i++;
             } while (empty($rusers) && !empty($croles[$i]));
         }
@@ -583,6 +601,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return void
      */
     public function cron() {
+
         $trace = new text_progress_trace();
         $this->sync($trace, null);
         $this->send_expiry_notifications($trace);
@@ -596,6 +615,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return int 0 means ok, 1 means error, 2 means plugin disabled
      */
     public function sync(progress_trace $trace, $courseid = null) {
+
         global $DB;
 
         if (!enrol_is_enabled('self_parents')) {
@@ -609,7 +629,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
 
         $trace->output('Verifying self-enrolments...');
 
-        $params = array('now'=>time(), 'useractive'=>ENROL_USER_ACTIVE, 'courselevel'=>CONTEXT_COURSE);
+        $params = array('now' => time(), 'useractive' => ENROL_USER_ACTIVE, 'courselevel' => CONTEXT_COURSE);
         $coursesql = "";
         if ($courseid) {
             $coursesql = "AND e.courseid = :courseid";
@@ -631,7 +651,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
             $userid = $instance->userid;
             unset($instance->userid);
             $this->unenrol_user($instance, $userid);
-            $days = $instance->customint2 / 60*60*24;
+            $days = $instance->customint2 / 60 * 60 * 24;
             $trace->output("unenrolling user $userid from course $instance->courseid as they have did not log in for at least $days days", 1);
         }
         $rs->close();
@@ -648,7 +668,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
             $userid = $instance->userid;
             unset($instance->userid);
             $this->unenrol_user($instance, $userid);
-                $days = $instance->customint2 / 60*60*24;
+                $days = $instance->customint2 / 60 * 60 * 24;
             $trace->output("unenrolling user $userid from course $instance->courseid as they have did not access course for at least $days days", 1);
         }
         $rs->close();
@@ -672,13 +692,14 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return stdClass user record
      */
     protected function get_enroller($instanceid) {
+
         global $DB;
 
         if ($this->lasternollerinstanceid == $instanceid and $this->lasternoller) {
             return $this->lasternoller;
         }
 
-        $instance = $DB->get_record('enrol', array('id'=>$instanceid, 'enrol'=>$this->get_name()), '*', MUST_EXIST);
+        $instance = $DB->get_record('enrol', array('id' => $instanceid, 'enrol' => $this->get_name()), '*', MUST_EXIST);
         $context = context_course::instance($instance->courseid);
 
         if ($users = get_enrolled_users($context, 'enrol/self_parents:manage')) {
@@ -702,6 +723,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return array An array of user_enrolment_actions
      */
     public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
+
         $actions = array();
         $context = $manager->get_context();
         $instance = $ue->enrolmentinstance;
@@ -709,11 +731,11 @@ class enrol_self_parents_plugin extends enrol_plugin {
         $params['ue'] = $ue->id;
         if ($this->allow_unenrol($instance) && has_capability("enrol/self_parents:unenrol", $context)) {
             $url = new moodle_url('/enrol/unenroluser.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class' => 'unenrollink', 'rel' => $ue->id));
         }
         if ($this->allow_manage($instance) && has_capability("enrol/self_parents:manage", $context)) {
             $url = new moodle_url('/enrol/editenrolment.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, array('class'=>'editenrollink', 'rel'=>$ue->id));
+            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, array('class' => 'editenrollink', 'rel' => $ue->id));
         }
         return $actions;
     }
@@ -727,6 +749,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @param int $oldid
      */
     public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+
         global $DB;
         if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
             $merge = false;
@@ -742,9 +765,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
             $instanceid = $instance->id;
         } else {
             if (!empty($data->customint5)) {
-                if ($step->get_task()->is_samesite()) {
-                    // Keep cohort restriction unchanged - we are on the same site.
-                } else {
+                if (!$step->get_task()->is_samesite()) {
                     // Use some id that can not exist in order to prevent self enrolment,
                     // because we do not know what cohort it is in this site.
                     $data->customint5 = -1;
@@ -765,6 +786,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @param int $userid
      */
     public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+
         $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
     }
 
@@ -777,6 +799,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @param int $contextid
      */
     public function restore_role_assignment($instance, $roleid, $userid, $contextid) {
+
         // This is necessary only because we may migrate other types to this instance,
         // we do not use component in manual or self enrol.
         role_assign($roleid, $userid, $contextid, '', 0);
@@ -789,6 +812,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return bool
      */
     public function can_delete_instance($instance) {
+
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/self_parents:config', $context);
     }
@@ -800,6 +824,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * @return bool
      */
     public function can_hide_show_instance($instance) {
+
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/self_parents:config', $context);
     }
@@ -811,6 +836,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * Returns people who are "mentors" of the given userID
      */
     private function get_users_parents($userid) {
+
         global $DB;
         $usercontexts = $DB->get_records_sql("
             SELECT
@@ -831,7 +857,8 @@ class enrol_self_parents_plugin extends enrol_plugin {
     /**
      * Returns people who are "mentees" of the given userID
      */
-    function get_users_children($userid) {
+    public function get_users_children($userid) {
+
         global $DB;
         $usercontexts = $DB->get_records_sql("
             SELECT
@@ -853,8 +880,8 @@ class enrol_self_parents_plugin extends enrol_plugin {
      * First it just calls enrol_user in enrol_plugin, then it enrols
      * the users parents as well
      */
-    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0, $status = null, $recovergrades = null)
-    {
+    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0, $status = null, $recovergrades = null) {
+
         // Enrol the user as normal
         parent::enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
         // That doesn't return anything so we have to assume it worked
@@ -870,8 +897,8 @@ class enrol_self_parents_plugin extends enrol_plugin {
         }
     }
 
-    public function unenrol_user(stdClass $instance, $userid)
-    {
+    public function unenrol_user(stdClass $instance, $userid) {
+
         // Unenrol the user as normal
         parent::unenrol_user($instance, $userid);
         // That doesn't return anything so we have to assume it worked
@@ -883,19 +910,19 @@ class enrol_self_parents_plugin extends enrol_plugin {
             if ($this->user_is_enrolled($parent->userid, $instance->id)) {
                 // Parent is enrolled - we're going to unenrol them
                 // unless they have other children who are still enrolled
-                $unenrolParent = true;
+                $unenrolparent = true;
 
                 // Check if the parent still has other children who are enrolled
                 $children = $this->get_users_children($parent->userid);
                 foreach ($children as $child) {
                     if ($this->user_is_enrolled($child->userid, $instance->id)) {
-                        //Child is still enrolled - not going to unenrol the parent
-                        $unenrolParent = false;
+                        // Child is still enrolled - not going to unenrol the parent
+                        $unenrolparent = false;
                         break;
                     }
                 }
 
-                if ($unenrolParent) {
+                if ($unenrolparent) {
                     // User has no children, or all of their children are unenrolled - unenrol the parent
                     $this->unenrol_user($instance, $parent->userid);
                 }
@@ -908,8 +935,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
    /**
     * Returns true or false if the given userid is enrolled in the given enrolment instance
     */
-    function user_is_enrolled($userid, $instanceid)
-    {
+    public function user_is_enrolled($userid, $instanceid) {
         global $DB;
         return $DB->record_exists('user_enrolments', array('userid' => $userid, 'enrolid' => $instanceid));
     }
@@ -917,8 +943,7 @@ class enrol_self_parents_plugin extends enrol_plugin {
     /**
      * Custom data
      */
-    public function getCustomData($instanceid, $userid)
-    {
+    public function get_custom_data($instanceid, $userid) {
         global $DB;
         try {
             $value = $DB->get_field('enrol_self_parents_data', 'customtext2_value', array('enrolid' => $instanceid, 'userid' => $userid), MUST_EXIST);
@@ -929,20 +954,18 @@ class enrol_self_parents_plugin extends enrol_plugin {
 
     }
 
-    public function setCustomData($instanceid, $userid, $value)
-    {
+    public function set_custom_data($instanceid, $userid, $value) {
+
         global $DB;
 
         // Normalize value
         $value = $value ? 1 : 0;
 
-        if ($this->getCustomData($instanceid, $userid) !== null) {
-
+        if ($this->get_custom_data($instanceid, $userid) !== null) {
             // Already set - UPDATE
             return $DB->set_field('enrol_self_parents_data', 'customtext2_value', $value, array('enrolid' => $instanceid, 'userid' => $userid));
 
         } else {
-
             // Not already set - INSERT
             $row = new stdClass;
             $row->enrolid = $instanceid;
@@ -951,5 +974,4 @@ class enrol_self_parents_plugin extends enrol_plugin {
             return $DB->insert_record('enrol_self_parents_data', $row);
         }
     }
-
 }
