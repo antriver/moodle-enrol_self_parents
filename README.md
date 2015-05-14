@@ -15,3 +15,4 @@ All of these can be turned on or off.
 * customchar1: Role for parents
 * customchar2: Allow parents to unenrol their children
 * customchar3: Parents count towards max enroled limit
+* customtext2: Parent enroling child question
