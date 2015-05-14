@@ -10,7 +10,7 @@ Based on Moodle's built in self enrolment plugin, this allows users to enrol the
 All of these can be turned on or off.
 
 
-##### New fields in enrolment instances
+##### New fields in enrolment instances:
 * customint8: Allow parents to enrol their children
 * customchar1: Role for parents
 * customchar2: Allow parents to unenrol their children
