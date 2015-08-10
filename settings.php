@@ -86,7 +86,7 @@ if ($ADMIN->fulltree) {
         'enrol_self_parents/defaultenrol',
         get_string('defaultenrol', 'enrol'),
         get_string('defaultenrol_desc', 'enrol'),
-        1
+        0
     ));
 
     $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
