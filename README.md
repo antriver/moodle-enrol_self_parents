@@ -1,5 +1,4 @@
-Self and parents enrolment method
-===========
+# Moodle Self and Parents Enrolment Method
 Based on Moodle's built in self enrolment plugin, this allows users to enrol theirself, or for their parents to enrol/unenrol them.
 
 * When a child enrols, their parents also get enroled
@@ -9,8 +8,7 @@ Based on Moodle's built in self enrolment plugin, this allows users to enrol the
 
 All of these can be turned on or off.
 
-
-##### New fields in enrolment instances:
+#### New fields in enrolment instances:
 * customint8: Allow parents to enrol their children
 * customchar1: Role for parents
 * customchar2: Allow parents to unenrol their children
